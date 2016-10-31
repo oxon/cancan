@@ -110,7 +110,7 @@ module CanCan
       #     load_resource :new => :build
       #
       # [:+prepend+]
-      #   Passing +true+ will use prepend_before_filter instead of a normal before_filter.
+      #   Passing +true+ will use prepend_before_action instead of a normal before_filter.
       #
       def load_resource(*args)
         raise ImplementationRemoved, "The load_resource method has been removed, use load_and_authorize_resource instead."
@@ -170,7 +170,7 @@ module CanCan
       #   Authorize conditions on this parent resource when instance isn't available.
       #
       # [:+prepend+]
-      #   Passing +true+ will use prepend_before_filter instead of a normal before_filter.
+      #   Passing +true+ will use prepend_before_action instead of a normal before_filter.
       #
       def authorize_resource(*args)
         raise ImplementationRemoved, "The authorize_resource method has been removed, use load_and_authorize_resource instead."
@@ -255,12 +255,12 @@ module CanCan
       #     enable_authorization :unless => :devise_controller?
       #
       def enable_authorization(options = {}, &block)
-        before_filter(options.slice(:only, :except)) do |controller|
+        before_action(options.slice(:only, :except)) do |controller|
           next if options[:if] && !controller.send(options[:if])
           next if options[:unless] && controller.send(options[:unless])
           controller.authorize! controller.params[:action], controller.params[:controller]
         end
-        after_filter(options.slice(:only, :except)) do |controller|
+        after_action(options.slice(:only, :except)) do |controller|
           next if options[:if] && !controller.send(options[:if])
           next if options[:unless] && controller.send(options[:unless])
           unless controller.current_ability.fully_authorized? controller.params[:action], controller.params[:controller]

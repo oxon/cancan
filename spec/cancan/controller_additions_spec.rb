@@ -57,7 +57,7 @@ describe CanCan::ControllerAdditions do
   end
 
   it "load_and_authorize_resource with :prepend prepends the before filter" do
-    @controller_class.should_receive(:prepend_before_filter).with({})
+    @controller_class.should_receive(:prepend_before_action).with({})
     @controller_class.load_and_authorize_resource :foo => :bar, :prepend => true
   end
 
