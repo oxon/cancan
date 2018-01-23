@@ -74,14 +74,14 @@ describe CanCan::ControllerAdditions do
     @params.merge!(:controller => "projects", :action => "create")
     @controller.should_receive(:authorize!).with("create", "projects")
     @controller_class.stub(:before_action).with(:only => :foo, :except => :bar).and_yield(@controller)
-    @controller_class.stub(:after_filter).with(:only => :foo, :except => :bar)
+    @controller_class.stub(:after_action).with(:only => :foo, :except => :bar)
     @controller_class.enable_authorization(:only => :foo, :except => :bar)
   end
 
   it "enable_authorization should raise InsufficientAuthorizationCheck when not fully authoried" do
     @params.merge!(:controller => "projects", :action => "create")
     @controller_class.stub(:before_action).with(:only => :foo, :except => :bar)
-    @controller_class.stub(:after_filter).with(:only => :foo, :except => :bar).and_yield(@controller)
+    @controller_class.stub(:after_action).with(:only => :foo, :except => :bar).and_yield(@controller)
     lambda {
       @controller_class.enable_authorization(:only => :foo, :except => :bar)
     }.should raise_error(CanCan::InsufficientAuthorizationCheck)
@@ -92,7 +92,7 @@ describe CanCan::ControllerAdditions do
     @controller.stub(:authorize?) { false }
     @controller.stub(:authorize!) { @authorize_called = true }
     @controller_class.should_receive(:before_action).with({}).and_yield(@controller)
-    @controller_class.should_receive(:after_filter).with({}).and_yield(@controller)
+    @controller_class.should_receive(:after_action).with({}).and_yield(@controller)
     @controller_class.enable_authorization(:if => :authorize?)
     @authorize_called.should be_false
   end
@@ -102,7 +102,7 @@ describe CanCan::ControllerAdditions do
     @controller.stub(:engine_controller?) { true }
     @controller.stub(:authorize!) { @authorize_called = true }
     @controller_class.should_receive(:before_action).with({}).and_yield(@controller)
-    @controller_class.should_receive(:after_filter).with({}).and_yield(@controller)
+    @controller_class.should_receive(:after_action).with({}).and_yield(@controller)
     @controller_class.enable_authorization(:unless => :engine_controller?)
     @authorize_called.should be_false
   end
@@ -110,7 +110,7 @@ describe CanCan::ControllerAdditions do
   it "enable_authorization should pass block to rescue_from CanCan::Unauthorized call" do
     @block_called = false
     @controller_class.should_receive(:before_action).with({})
-    @controller_class.should_receive(:after_filter).with({})
+    @controller_class.should_receive(:after_action).with({})
     @controller_class.should_receive(:rescue_from).with(CanCan::Unauthorized).and_yield(:exception)
     @controller_class.enable_authorization { |e| @block_called = (e == :exception) }
     @block_called.should be_true
