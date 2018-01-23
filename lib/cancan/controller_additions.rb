@@ -255,7 +255,7 @@ module CanCan
       #     enable_authorization :unless => :devise_controller?
       #
       def enable_authorization(options = {}, &block)
-        before_filter(options.slice(:only, :except)) do |controller|
+        before_action(options.slice(:only, :except)) do |controller|
           next if options[:if] && !controller.send(options[:if])
           next if options[:unless] && controller.send(options[:unless])
           controller.authorize! controller.params[:action], controller.params[:controller]
